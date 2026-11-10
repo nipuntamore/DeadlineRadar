@@ -1,7 +1,7 @@
 "use client";
 import { useState, useEffect } from "react";
 import TaskCard from "./components/TaskCard";
-import Sidebar from "./components/Sidebar";
+//import Sidebar from "./components/Sidebar";
 import Radar from "./components/Radar";
 
 export default function Home(){
@@ -258,7 +258,6 @@ const overdueTasks = tasks.filter(task=>calculateDaysLeft(task.dueDate)<0 && !ta
 
   return(
     <div className="flex min-h-screen">
-      <Sidebar/>
       <main className="flex-1 min-w-0 px-6 pb-6 pt-20 md:p-6">
         <h1 className="text-4xl font-bold text-blue-500">{appName}</h1>
         <h2>Welcome back {studentName}!</h2>
