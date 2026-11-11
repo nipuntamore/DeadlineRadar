@@ -6,7 +6,13 @@ import {
     Pie,
     Cell,
     Tooltip,
-    ResponsiveContainer
+    ResponsiveContainer,
+    BarChart,
+    Bar,
+    XAxis,
+    YAxis,
+    CartesianGrid,
+    Legend
 }from "recharts";
 
 
@@ -67,6 +73,29 @@ export default function Analytics(){
         }
     ];
     const COLORS = ["#f43f5e", "#f97316", "#a855f7", "#06b6d4"];
+
+    const last7Days = Array.from({length:7},(_, index) => {
+        const date = new Date();
+        date.setDate(date.getDate()-(6-index));
+        return date;
+    });
+    const productivityData = last7Days.map(date=>{
+        const dateKey = [
+            date.getFullYear(),
+            String(date.getMonth()+1).padStart(2,"0"),
+            String(date.getDate()+1).padStart(2,"0")
+        ].join("-");
+
+        const count = tasks.filter(task =>
+            task.created_at.startsWith(dateKey)
+        ).length;
+        return{
+                day: date.toLocaleDateString("en-IN",{
+                    weekday: "short"
+                }),
+                tasks : count
+            };
+    });
 
     return (
         <div className="text-white">
@@ -143,6 +172,33 @@ export default function Analytics(){
                                 </div>
                             )}
                             
+                        </div>
+                    </div>
+                    <div className="mt-8 bg-slate-800 p-6 rounded-xl">
+                        <h2 className="text-xl font-semibold mb-2">Weekly Productivity</h2>
+                        <p className="text-slate-400 text-sm mb-6">Tasks created over the last 7 days</p>
+                        <div className="w-full h-80">
+                            <ResponsiveContainer width="100%" height="100%">
+                                <BarChart data={productivityData}>
+                                    <CartesianGrid
+                                        strokeDasharray="3 3"
+                                        stroke="#334155"
+                                    />
+                                    <XAxis
+                                        dataKey="day"
+                                        stroke="#94a3b8"
+                                    />
+                                    <YAxis
+                                        stroke="#94a3b8"
+                                    />
+                                    <Tooltip/>
+                                    <Bar
+                                        dataKey="tasks"
+                                        fill="#06b6d4"
+                                        radius={[6,6,0,0]}
+                                    />
+                                </BarChart>
+                            </ResponsiveContainer>
                         </div>
                     </div>
                 </>
