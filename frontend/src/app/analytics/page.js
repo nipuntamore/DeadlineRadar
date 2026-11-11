@@ -12,9 +12,30 @@ import {
     XAxis,
     YAxis,
     CartesianGrid,
-    Legend
+
 }from "recharts";
 
+function getRelativeTime(timestamp){
+    const timeNow = Date.now();
+    const timeThen = new Date(timestamp).getTime();
+    const diff = timeNow - timeThen;
+    const minutes = Math.floor(diff / (1000 * 60));
+    const hours = Math.floor(minutes / 60);
+    const days = Math.floor(minutes / 1440);
+
+    if (minutes<1){
+        return "Just now"
+    }
+    else if (minutes<60){
+        return `${minutes} minutes ago`
+    }
+    else if (minutes<1440){
+        return `${hours} hours ago`
+    }
+    else{
+        return `${days} days ago`
+    }
+}
 
 export default function Analytics(){
     const [tasks, setTasks] = useState([]);
@@ -83,7 +104,7 @@ export default function Analytics(){
         const dateKey = [
             date.getFullYear(),
             String(date.getMonth()+1).padStart(2,"0"),
-            String(date.getDate()+1).padStart(2,"0")
+            String(date.getDate()).padStart(2,"0")
         ].join("-");
 
         const count = tasks.filter(task =>
@@ -96,6 +117,26 @@ export default function Analytics(){
                 tasks : count
             };
     });
+
+    const [activities, setActivities] = useState([]);
+    useEffect(()=>{
+        async function fetchActivities(){
+            try{
+                const response = await fetch(
+                    "http://localhost:8000/api/activities/"
+                );
+                if (!response.ok){
+                        throw new Error("Failed to fetch activities");            
+                    }
+                const data = await response.json();
+                setActivities(data);
+            }
+            catch(error){
+                console.error("Error fetching activities",error)
+            }
+        }
+        fetchActivities();
+    },[]);
 
     return (
         <div className="text-white">
@@ -201,6 +242,51 @@ export default function Analytics(){
                             </ResponsiveContainer>
                         </div>
                     </div>
+                    <section className="m-5">
+                        <h2 className="text-white font-semibold mb-4">
+                            Recent Activity
+                        </h2>
+
+                        {activities.length === 0 ? (
+                            <p className="text-slate-400">No recent activity yet.</p>
+                        ) : (
+                            activities.map((activity) => (
+                                <div
+                                    key={activity.id}
+                                    className="flex items-start gap-4 rounded-xl border border-slate-700/60 bg-slate-800/50 p-4 mb-3 hover:bg-slate-800 transition"
+                                >
+                                    {/* Event indicator */}
+                                    <div className={`mt-1 h-3 w-3 shrink-0 rounded-full ${
+                                        activity.event === "Created" ? "bg-cyan-400" :
+                                        activity.event === "Updated" ? "bg-blue-400" :
+                                        activity.event === "Completed" ? "bg-emerald-400" :
+                                        "bg-rose-400"
+                                    }`}></div>
+
+                                    {/* Activity details */}
+                                    <div>
+                                        <h3 className="text-white font-medium">
+                                            {activity.task_name}
+                                        </h3>
+
+                                        <p className={`text-sm font-semibold ${
+                                            activity.event === "Created" ? "text-cyan-400" :
+                                            activity.event === "Updated" ? "text-blue-400" :
+                                            activity.event === "Completed" ? "text-emerald-400" :
+                                            "text-rose-400"
+                                        }`}>
+                                            {activity.event}
+                                        </p>
+
+                                        <p className="text-xs text-slate-400 mt-1">
+                                            {getRelativeTime(activity.time_stamp)}
+                                        </p>
+                                    </div>
+                                </div>
+                            ))
+                        )}
+                    </section>
+                    
                 </>
 
 
