@@ -24,7 +24,7 @@ export default function Sidebar(){
         </button>
         <aside className={`${isOpen ? "flex" : "hidden"} md:flex fixed md:static inset-y-0 left-0 z-40 w-64 shrink-0 min-h-screen bg-slate-950 text-white p-6 flex-col`}>            
              
-            <div className="text-xl font-bold text-cyan-400 mb-8">DeadlineRadar</div>
+            <div className="text-xl font-bold text-cyan-400 mb-8">🎯DeadlineRadar</div>
             <ul className="mt-8 space-y-3">
                 {navItems.map((item)=>(<li key={item.path}>
                     <Link

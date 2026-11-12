@@ -51,9 +51,7 @@ export default function Radar({tasks, calculateDaysLeft}){
 
     return(
         <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mb-6">
-            <h2 className="text-xl font-semibold text-white mb-5">
-                Deadline Radar
-            </h2>
+
             <div className="flex justify-center" >
                 <svg 
                     viewBox="0 0 400 400"

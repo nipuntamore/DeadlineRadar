@@ -5,7 +5,7 @@ import TaskCard from "./components/TaskCard";
 import Radar from "./components/Radar";
 
 export default function Home(){
-  const studentName = "Nipun";
+  const [displayName, setDisplayName] = useState("User");
   const appName = "DeadlineRadar";
 
   const [tasks, setTasks] = useState([]);
@@ -47,6 +47,21 @@ export default function Home(){
   const [priority, setPriority] = useState("Medium");
   const [editingPriorityId, setEditingPriorityId] = useState(null);
   const [newPriority, setNewPriority] = useState("Medium")
+
+  useEffect(() => {
+    const savedName = localStorage.getItem("displayName");
+
+    if (savedName) {
+        setDisplayName(savedName);
+    }
+  }, []);
+
+  useEffect(()=>{
+    const savedPriority = localStorage.getItem("defaultPriority");
+    if(savedPriority){
+      setPriority(savedPriority);
+    }
+  },[]);
 
   async function handleAddTask(){
     if (taskName.trim() === "" || dueDate === ""){
@@ -257,34 +272,35 @@ const pendingTasks = tasks.filter(task=> !task.isCompleted).length;
 const overdueTasks = tasks.filter(task=>calculateDaysLeft(task.dueDate)<0 && !task.isCompleted).length;
 
   return(
-    <div className="flex min-h-screen">
+    <div className="flex min-h-screen mb-8">
       <main className="flex-1 min-w-0 px-6 pb-6 pt-20 md:p-6">
-        <h1 className="text-4xl font-bold text-blue-500">{appName}</h1>
-        <h2>Welcome back {studentName}!</h2>
-        <p>Your Deadlines. Your Control.</p>
-        <p>Manage your tasks. Stay ahead.</p>
+        <h1 className="text-2xl font-medium text-cyan-400 mb-2 font-semibold">🎯{appName}</h1>
+        <h2 className="text-3xl md:text-4xl font-bold text-white">Welcome back {displayName}!</h2>
+        <p className="text-slate-400 mt-2">Your Deadlines. Your Control.</p>
+        <p className="text-slate-400 mt-2 text-sm">Let's make it happen!</p>
         <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-4 gap-4 mt-6 ">
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-white">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-700/70 rounded-2xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-950/30">
             <p className="text-sm text-slate-400">Total Tasks</p>
             <h2 className="text-3xl font-bold mt-2 text-cyan-400">{totalTasks}</h2>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-white">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-700/70 rounded-2xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-950/30">
             <p className="text-sm text-slate-400">Completed Tasks</p>
             <h2 className="text-3xl font-bold mt-2 text-emerald-400">{completedTasks}</h2>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-white">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-700/70 rounded-2xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-950/30">
             <p className="text-sm text-slate-400">Pending Tasks</p>
             <h2 className="text-3xl font-bold mt-2 text-purple-400">{pendingTasks}</h2>
           </div>
-          <div className="bg-slate-900 border border-slate-800 rounded-xl p-5 text-white">
+          <div className="bg-gradient-to-br from-slate-900 to-slate-800/80 border border-slate-700/70 rounded-2xl p-6 text-white transition-all duration-300 hover:-translate-y-1 hover:border-cyan-500/50 hover:shadow-lg hover:shadow-cyan-950/30">
             <p className="text-sm text-slate-400">Overdue Tasks</p>
             <h2 className="text-3xl font-bold mt-2 text-rose-400">{overdueTasks}</h2>
           </div>
         </div>
-        <div className="bg-slate-900 border border-slate-800 rounded-2xl p-6 mt-6 mb-6 w-full">
-          <h2 className="text-xl font-semibold text-white mb-5">
+        <div className="bg-gradient-to-br from-slate-900 to-slate-800/60 border border-slate-700/70 rounded-2xl p-6 mt-6 mb-6 w-full shadow-lg shadow-black/10">
+          <h2 className="text-xl font-semibold text-white mb-1">
             Add a New Task
           </h2>
+          <p className="text-sm text-slate-400 mb-5">Capture your next deadline before you forget.</p>
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           
             <input
@@ -322,6 +338,14 @@ const overdueTasks = tasks.filter(task=>calculateDaysLeft(task.dueDate)<0 && !ta
             Add task
             </button>
           </div>
+        </div>
+        <div className="mt-8 mb-4">
+          <h2 className="text-2xl font-bold text-white">
+              Deadline Radar
+          </h2>
+          <p className="text-sm text-slate-400 mt-1">
+              Visualize your deadlines and spot urgent tasks.
+          </p>
         </div>
         <Radar
           tasks = {tasks}
