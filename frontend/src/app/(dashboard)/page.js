@@ -50,11 +50,22 @@ export default function Home(){
   const [newPriority, setNewPriority] = useState("Medium")
 
   useEffect(() => {
-    const savedName = localStorage.getItem("displayName");
+    async function fetchProfile() {
+        try {
+            const response = await apiFetch("/api/profile/");
 
-    if (savedName) {
-        setDisplayName(savedName);
+            if (!response.ok) {
+                throw new Error("Failed to fetch profile");
+            }
+
+            const data = await response.json();
+            setDisplayName(data.username);
+        } catch (error) {
+            console.error("Profile error:", error);
+        }
     }
+
+    fetchProfile();
   }, []);
 
   useEffect(()=>{

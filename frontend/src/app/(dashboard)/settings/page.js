@@ -1,6 +1,7 @@
 "use client"
 
 import { useState, useEffect } from "react";
+import { apiFetch } from "../../lib/api";
 
 export default function Settings(){
     const [displayName, setDisplayName] = useState ("User");
@@ -8,19 +9,57 @@ export default function Settings(){
     const [saveMessage, setSaveMessage] = useState("");
     const [prioritySaveMessage, setPrioritySaveMessage] = useState("");
 
-    useEffect(() => {
-        const savedName = localStorage.getItem("displayName");
-        const savedPriority = localStorage.getItem("defaultPriority");
-
-        if (savedName) {
-            setDisplayName(savedName);
+   useEffect(() => {
+        async function loadSettings() {
+            try {
+                const response = await apiFetch("/api/profile/");
+                if (!response.ok) {
+                    throw new Error("Could not load profile");
+                }
+                const data = await response.json();
+                setDisplayName(data.username);
+                const savedPriority = localStorage.getItem("defaultPriority");
+                if (savedPriority) {
+                    setDefaultPriority(savedPriority);
+                }
+            } catch (error) {
+                setSaveMessage("Unable to load profile.");
+            }
         }
 
-        if (savedPriority) {
-            setDefaultPriority(savedPriority);
-        }
+        loadSettings();
     }, []);
+    async function handleSaveProfile() {
+        if (!displayName.trim()) {
+            setSaveMessage("Username cannot be empty.");
+            return;
+        }
 
+        try {
+            const response = await apiFetch("/api/profile/", {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                },
+                body: JSON.stringify({
+                    username: displayName.trim(),
+                }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                throw new Error(
+                    data.username?.[0] || "Unable to update username."
+                );
+            }
+
+            setDisplayName(data.username);
+            setSaveMessage("Username updated successfully!");
+        } catch (error) {
+            setSaveMessage(error.message);
+        }
+    }
     
 
    
@@ -33,18 +72,18 @@ export default function Settings(){
         </div>
         <div className="rounded-2xl border border-slate-700 bg-slate-800/70 p-6 space-y-4 m-5">
             <h2 className="text-xl font-semibold text-white">Profile</h2>
-            <label className="mb-2 block text-sm text-slate-300">Display Name</label>
+            <label className="mb-2 block text-sm text-slate-300">Username</label>
             <input
                 type="text"
                 value={displayName}
-                onChange={(e)=>{setDisplayName(e.target.value), setPrioritySaveMessage("");}}
+                onChange={(e) => {
+                    setDisplayName(e.target.value);
+                    setSaveMessage("");
+                }}
                 className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-500"
             />
             <button
-                onClick={() => {
-                    localStorage.setItem("displayName", displayName.trim());
-                    setSaveMessage("Display name saved successfully!");
-                }}
+                onClick={handleSaveProfile}
                 className="rounded-xl bg-cyan-500 px-5 py-3 font-semibold text-slate-950 transition hover:bg-cyan-400 m-5"
             >
                 Save Changes
@@ -61,16 +100,19 @@ export default function Settings(){
                     <p className="text-sm text-slate-400">Choose your default task priority.</p>
                 </div>
             
-            <select
-                value={defaultPriority}
-                onChange={(e) => {setDefaultPriority(e.target.value);  setSaveMessage("")}}
-                className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-500"
-            >
-                <option value="Urgent">Urgent</option>
-                <option value="High">High</option>
-                <option value="Medium">Medium</option>
-                <option value="Low">Low</option>
-            </select>
+                <select
+                    value={defaultPriority}
+                    onChange={(e) => {
+                        setDefaultPriority(e.target.value);
+                        localStorage.setItem("defaultPriority", e.target.value);
+                    }}
+                    className="w-full rounded-xl border border-slate-700 bg-slate-900 px-4 py-3 text-white outline-none focus:border-cyan-500"
+                >
+                    <option value="Urgent">Urgent</option>
+                    <option value="High">High</option>
+                    <option value="Medium">Medium</option>
+                    <option value="Low">Low</option>
+                </select>
             <button
                 onClick={() => {
                     localStorage.setItem("defaultPriority", defaultPriority);
@@ -100,7 +142,7 @@ export default function Settings(){
                 <div className="border-t border-slate-700 pt-3">
                     <p className="text-slate-400">Technology Stack</p>
                     <p className="mt-2 text-cyan-400">
-                        Next.js · React · Django · SQLite
+                        Next.js · React · Django · SQLite · PostgreSQL
                     </p>
                 </div>
                 <div className="grid col-2">
