@@ -120,8 +120,6 @@ Production environment variables must be configured through the respective hosti
 
 **Nipun Tamore**
 
-Built as an individual Technical Committee project.
-
 ---
 
 *DeadlineRadar — Let's make it happen!*
