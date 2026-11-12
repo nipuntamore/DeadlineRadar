@@ -14,7 +14,7 @@ export default function Home(){
   useEffect(()=>{
     async function fetchTasks() {
       try{
-        const response = await fetch("http://localhost:8000/api/tasks/");
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`);
       
       if (!response.ok){
         throw new error("Failed to fetch tasks");
@@ -69,7 +69,7 @@ export default function Home(){
     }
     try{
       const response = await fetch(
-        "http://localhost:8000/api/tasks/",
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`,
         {
           method:"POST",
           headers:{
@@ -116,7 +116,7 @@ export default function Home(){
   async function handleDeleteTask(id){
     try{
       const response = await fetch(
-        `http://localhost:8000/api/tasks/${id}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
         {
           method:"DELETE"
         }
@@ -139,7 +139,7 @@ export default function Home(){
     const updatedStatus = !selectedTask.isCompleted;
     try{
       const response = await fetch(
-        `http://localhost:8000/api/tasks/${id}/`,
+        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
         {
           method :"PATCH",
           headers : {
@@ -194,7 +194,7 @@ function handleEditPriority(id){
 async function handleSavePriority(id){
   try{
     const response = await fetch (
-      `http://localhost:8000/api/tasks/${id}/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
       {
         method : "PATCH",
         headers : {
@@ -225,7 +225,7 @@ async function handleSaveTaskDetails(id, editedTaskname, editedDueDate){
   }
   try{
     const response = await fetch(
-      `http://localhost:8000/api/tasks/${id}/`,
+      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
       {
         method : "PATCH",
         headers : {

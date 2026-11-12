@@ -57,7 +57,7 @@ export default function Analytics(){
         async function fetchTasks() {
             try{
                 const response = await fetch(
-                    "http://localhost:8000/api/tasks/"
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`
                 );
                 if (!response.ok){
                     throw new Error("Failed to fetch tasks");            
@@ -123,7 +123,7 @@ export default function Analytics(){
         async function fetchActivities(){
             try{
                 const response = await fetch(
-                    "http://localhost:8000/api/activities/"
+                    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`
                 );
                 if (!response.ok){
                         throw new Error("Failed to fetch activities");            
