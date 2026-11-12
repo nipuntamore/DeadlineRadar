@@ -3,9 +3,18 @@
 import { useState } from "react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
+import { useRouter } from "next/navigation";
 
 export default function Sidebar(){
     const [isOpen,setIsOpen] = useState(false);
+    const router = useRouter();
+
+    function handleLogout() {
+        sessionStorage.removeItem("access");
+        sessionStorage.removeItem("refresh");
+
+        router.replace("/login");
+    }
     const pathname = usePathname();
     const navItems = [
         {name: "Dashboard", path:"/"},
@@ -35,6 +44,12 @@ export default function Sidebar(){
                 </li>))}
             </ul>
 
+            <button
+                onClick={handleLogout}
+                className="w-full text-left px-4 py-3 mb-5 rounded-lg text-red-400 hover:bg-red-500/10 transition"
+            >
+                ↪ Logout
+            </button>
             <div className="mt-auto text-sm text-slate-500">
                 Made by Nipun Tamore
             </div>

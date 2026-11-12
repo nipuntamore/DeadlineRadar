@@ -1,5 +1,6 @@
 "use client"
 import {useState,useEffect} from "react";
+import { apiFetch } from "../../lib/api";
 
 export default function Tasks(){
     const [tasks, setTasks] = useState([]);
@@ -10,8 +11,8 @@ export default function Tasks(){
     useEffect(()=>{
         async function fetchTasks(){
             try{
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`
+                const response = await apiFetch(
+                    "/api/tasks/"
                 );
                 if (!response.ok){
                     throw new Error("Failed to fetch Tasks");
@@ -57,7 +58,7 @@ export default function Tasks(){
     
 
     return (
-        <div className="space-y-6">
+        <div className="flex-1 min-w-0 min-h-screen text-white p-4 md:p-6 space-y-6">
             <h1 className="text-3xl font-bold text-white">My Tasks</h1>
             <p className="text-slate-400">Manage all your deadlines in one place</p>
             <input

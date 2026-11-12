@@ -1,5 +1,6 @@
 "use client";
 
+import { apiFetch } from "@/app/lib/api";
 import { useState, useEffect } from "react";
 import {
     PieChart,
@@ -56,8 +57,8 @@ export default function Analytics(){
     useEffect(()=>{
         async function fetchTasks() {
             try{
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`
+                const response = await apiFetch(
+                    "/api/tasks/"
                 );
                 if (!response.ok){
                     throw new Error("Failed to fetch tasks");            
@@ -122,8 +123,8 @@ export default function Analytics(){
     useEffect(()=>{
         async function fetchActivities(){
             try{
-                const response = await fetch(
-                    `${process.env.NEXT_PUBLIC_API_URL}/api/activities/`
+                const response = await apiFetch(
+                    "/api/activities/"
                 );
                 if (!response.ok){
                         throw new Error("Failed to fetch activities");            
@@ -139,7 +140,7 @@ export default function Analytics(){
     },[]);
 
     return (
-        <div className="text-white">
+        <div className="flex-1 min-w-0 min-h-screen text-white px-6 pb-6 pt-20 md:p-6 ">
             <h1 className="text-3xl font-bold">
                 Analytics Dashboard
             </h1>

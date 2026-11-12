@@ -1,8 +1,9 @@
 "use client";
 import { useState, useEffect } from "react";
-import TaskCard from "./components/TaskCard";
-//import Sidebar from "./components/Sidebar";
-import Radar from "./components/Radar";
+import TaskCard from "../components/TaskCard";
+//import Sidebar from "../components/Sidebar";
+import { apiFetch } from "../lib/api";
+import Radar from "../components/Radar";
 
 export default function Home(){
   const [displayName, setDisplayName] = useState("User");
@@ -14,10 +15,10 @@ export default function Home(){
   useEffect(()=>{
     async function fetchTasks() {
       try{
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`);
+        const response = await apiFetch("/api/tasks/");
       
       if (!response.ok){
-        throw new error("Failed to fetch tasks");
+        throw new Error("Failed to fetch tasks");
       }
       const data = await response.json();
       const formattedTasks = data.map(task=>({
@@ -68,8 +69,8 @@ export default function Home(){
       return;
     }
     try{
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`,
+      const response = await apiFetch(
+        "/api/tasks/",
         {
           method:"POST",
           headers:{
@@ -115,8 +116,8 @@ export default function Home(){
 
   async function handleDeleteTask(id){
     try{
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
+      const response = await apiFetch(
+        `/api/tasks/${id}/`,
         {
           method:"DELETE"
         }
@@ -138,8 +139,8 @@ export default function Home(){
 
     const updatedStatus = !selectedTask.isCompleted;
     try{
-      const response = await fetch(
-        `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
+      const response = await apiFetch(
+        `/api/tasks/${id}/`,
         {
           method :"PATCH",
           headers : {
@@ -151,7 +152,7 @@ export default function Home(){
         }
       );
       if (!response.ok){
-        throw new error("Failed to update task");
+        throw new Error("Failed to update task");
       }
       setTasks(prev=>prev.map(task => {if (task.id === id){
         return {
@@ -193,8 +194,8 @@ function handleEditPriority(id){
 
 async function handleSavePriority(id){
   try{
-    const response = await fetch (
-      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
+    const response = await apiFetch (
+      `/api/tasks/${id}/`,
       {
         method : "PATCH",
         headers : {
@@ -224,8 +225,8 @@ async function handleSaveTaskDetails(id, editedTaskname, editedDueDate){
     return false;
   }
   try{
-    const response = await fetch(
-      `${process.env.NEXT_PUBLIC_API_URL}/api/tasks/${id}/`,
+    const response = await apiFetch(
+      `/api/tasks/${id}/`,
       {
         method : "PATCH",
         headers : {
@@ -238,8 +239,13 @@ async function handleSaveTaskDetails(id, editedTaskname, editedDueDate){
       }
     );
     if (!response.ok){
-      throw new Error("Failed to update Tassk Details");
-    }
+      const errorData = await response.text();
+
+        console.error("Status:", response.status);
+        console.error("Backend response:", errorData);
+
+        throw new Error("Failed to update Task Details");
+      }
     setTasks(prev=>prev.map(task=>task.id === id?{...task,taskName:editedTaskname,dueDate:editedDueDate}:task));
     setError("");
     return true;
@@ -272,7 +278,7 @@ const pendingTasks = tasks.filter(task=> !task.isCompleted).length;
 const overdueTasks = tasks.filter(task=>calculateDaysLeft(task.dueDate)<0 && !task.isCompleted).length;
 
   return(
-    <div className="flex min-h-screen mb-8">
+    <div className="flex-1 min-w-0 min-h-screen mb-8">
       <main className="flex-1 min-w-0 px-6 pb-6 pt-20 md:p-6">
         <h1 className="text-2xl font-medium text-cyan-400 mb-2 font-semibold">🎯{appName}</h1>
         <h2 className="text-3xl md:text-4xl font-bold text-white">Welcome back {displayName}!</h2>

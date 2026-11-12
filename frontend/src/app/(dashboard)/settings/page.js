@@ -26,6 +26,7 @@ export default function Settings(){
    
 
     return(
+        <div className="flex-1 min-w-0 min-h-screen text-white p-4 md:p-6">
         <><div className="space-y-6 ">
             <h1 className="text-3xl font-bold text-white">Settings</h1>
             <p className="text-slate-400">Customize your DeadlineRadar Experience</p>
@@ -122,7 +123,8 @@ export default function Settings(){
                 "Let's make it happen."
             </p>
         </div>
-
+        
         </>
+        </div>
     )
 }

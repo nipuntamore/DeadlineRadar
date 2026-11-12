@@ -1,5 +1,6 @@
 "use client"
 import { useState,useEffect } from "react";
+import { apiFetch } from "../../lib/api";
 
 export default function calendar(){
     const now = new Date();
@@ -35,7 +36,7 @@ export default function calendar(){
     useEffect(()=>{
         async function fetchTasks(){
             try{
-                const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/api/tasks/`);
+                const response = await apiFetch("/api/tasks/");
 
                 if (!response.ok){
                     throw new Error("Failed to fetch tasks");
@@ -58,7 +59,7 @@ export default function calendar(){
     },[]);
 
     return(
-        <div className="text-white p-2 md:p-4">
+        <div className="flex-1 min-w-0 min-h-screen text-white px-6 pb-6 pt-20 md:p-6">
             <div className="flex items-center justify-between mb-6">
                 <button onClick={goToPreviousMonth} className="bg-slate-800 px-4 py-2 rounded-lg hover:bg-slate-700">← Previous</button>
                 <h1 className="text-3xl font-bold mb-6">
